@@ -128,6 +128,7 @@ exports.updateUser = async (req, res, next) => {
     await user.save();
 
     // Renvoie l'utilisateur mis à jour
+    res.location(`/user/${user._id}`);
     res.status(200).json(user)
   } catch (error) {
     // Si une erreur est survenue, on la renvoie
