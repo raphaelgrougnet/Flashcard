@@ -98,8 +98,6 @@ exports.getPaquet = async (req, res, next) => {
 
     // Recherche du paquet par son ID
     const paquet = await Paquet.findById(id);
-    //! const cartes = await Carte.find({ paquetId: id });
-    //! paquet.cartes = cartes;
 
     // Si le paquet n'existe pas, on lance une erreur
     if (!paquet) {
@@ -108,8 +106,18 @@ exports.getPaquet = async (req, res, next) => {
       throw error;
     }
 
+    //! Faire en sorte que les cartes soit dans le paquet
+    const cartes = await Carte.find({ paquetId: id });
+
+    if (!cartes) {
+      cartes = {}
+    }
+    
+
+    const paquetCartes = {"paquet" : paquet, "cartes" : cartes};
+
     // Envoi du paquet en réponse
-    res.status(200).json(paquet);
+    res.status(200).json(paquetCartes);
   } catch (error) {
     // Gestion des erreurs
     if (error.name === 'ValidationError') {
