@@ -28,13 +28,12 @@ exports.getUsers = async (req, res, next) => {
 
 // Crée un nouvel utilisateur
 exports.createUser = async (req, res, next) => {
-  try{
-    // Récupère les données du body
-    const { courriel, nom, prenom } = req.body;
+  // Récupère les données du body
+  const { courriel, nom, prenom } = req.body;
     
-    // Crée un nouvel utilisateur
-    const user = new User({nom, prenom, courriel});
-
+  // Crée un nouvel utilisateur
+  const user = new User({nom, prenom, courriel});
+  try{
     // Sauvegarde l'utilisateur dans la base de données
     const utilisateurCree = await user.save();
     
@@ -58,17 +57,16 @@ exports.createUser = async (req, res, next) => {
 
 // Récupérer un utilisateur spécifique
 exports.getUser = async (req, res, next) => {
-  try {
-    // Récupère l'id de l'utilisateur
-    const id = req.params.id;
+  // Récupère l'id de l'utilisateur
+  const id = req.params.id;
 
+  try {
     // Si l'id n'est pas valide, on lance une erreur
     if (id.length !== 12 && id.length !== 24) {
       const error = new Error('ID d\'utilisateur invalide');
       error.statusCode = 400;
       throw error;
     }
-    
     // Récupère l'utilisateur
     const user = await User.findById(id);
 
@@ -97,10 +95,10 @@ exports.getUser = async (req, res, next) => {
 
 // Mettre à jour un utilisateur spécifique
 exports.updateUser = async (req, res, next) => {
-  try {
-    // Récupère l'id de l'utilisateur
-    const id = req.params.id;
+  // Récupère l'id de l'utilisateur
+  const id = req.params.id;
 
+  try {
     // Si l'id n'est pas valide, on lance une erreur
     if (id.length !== 12 && id.length !== 24) {
       const error = new Error('ID d\'utilisateur invalide');
@@ -146,10 +144,10 @@ exports.updateUser = async (req, res, next) => {
 
 // Supprimer un utilisateur spécifique
 exports.deleteUser = async (req, res, next) => {
-  try {
-    // Récupère l'id de l'utilisateur
-    const id = req.params.id;
+  // Récupère l'id de l'utilisateur
+  const id = req.params.id;
 
+  try {
     // Si l'id n'est pas valide, on lance une erreur
     if (id.length !== 12 && id.length !== 24) {
       const error = new Error('ID d\'utilisateur invalide');
