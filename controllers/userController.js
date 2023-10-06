@@ -1,9 +1,9 @@
-const User = require('../models/user'); 
+const User = require('../models/user'); // Importation du modèle User
 
 // Récupérer tous les utilisateurs
 exports.getUsers = async (req, res, next) => {
   try {
-    // Récupère tous les utilisateurs
+    // Récupère tous les utilisateurs de la base de données
     const users = await User.find();
 
     // Si aucun utilisateur n'est trouvé, on lance une erreur
@@ -31,7 +31,7 @@ exports.createUser = async (req, res, next) => {
   // Récupère les données du body
   const { courriel, nom, prenom } = req.body;
     
-  // Crée un nouvel utilisateur
+  // Crée un nouvel utilisateur avec les données récupérées
   const user = new User({nom, prenom, courriel});
   try{
     // Sauvegarde l'utilisateur dans la base de données
@@ -57,7 +57,7 @@ exports.createUser = async (req, res, next) => {
 
 // Récupérer un utilisateur spécifique
 exports.getUser = async (req, res, next) => {
-  // Récupère l'id de l'utilisateur
+  // Récupère l'id de l'utilisateur depuis les paramètres de la requête
   const id = req.params.id;
 
   try {
@@ -67,7 +67,7 @@ exports.getUser = async (req, res, next) => {
       error.statusCode = 400;
       throw error;
     }
-    // Récupère l'utilisateur
+    // Récupère l'utilisateur de la base de données
     const user = await User.findById(id);
 
     // Si aucun utilisateur n'est trouvé, on lance une erreur
@@ -95,7 +95,7 @@ exports.getUser = async (req, res, next) => {
 
 // Mettre à jour un utilisateur spécifique
 exports.updateUser = async (req, res, next) => {
-  // Récupère l'id de l'utilisateur
+  // Récupère l'id de l'utilisateur depuis les paramètres de la requête
   const id = req.params.id;
 
   try {
@@ -106,7 +106,7 @@ exports.updateUser = async (req, res, next) => {
       throw error;
     }
     
-    // Récupère l'utilisateur
+    // Récupère l'utilisateur de la base de données
     const user = await User.findById(id);
 
     // Si aucun utilisateur n'est trouvé, on lance une erreur
@@ -119,7 +119,7 @@ exports.updateUser = async (req, res, next) => {
     // Récupère les données du body
     const { courriel, nom, prenom } = req.body;
 
-    // Met à jour l'utilisateur
+    // Met à jour l'utilisateur avec les nouvelles données
     user.courriel = courriel;
     user.nom = nom;
     user.prenom = prenom;
@@ -144,7 +144,7 @@ exports.updateUser = async (req, res, next) => {
 
 // Supprimer un utilisateur spécifique
 exports.deleteUser = async (req, res, next) => {
-  // Récupère l'id de l'utilisateur
+  // Récupère l'id de l'utilisateur depuis les paramètres de la requête
   const id = req.params.id;
 
   try {
@@ -155,6 +155,7 @@ exports.deleteUser = async (req, res, next) => {
       throw error;
     }
     
+    // Récupère l'utilisateur de la base de données
     const user = await User.findById(id);
 
     // Si aucun utilisateur n'est trouvé, on lance une erreur
@@ -164,9 +165,10 @@ exports.deleteUser = async (req, res, next) => {
       throw error;
     };
 
-    // Supprime l'utilisateur
+    // Supprime l'utilisateur de la base de données
     await User.findByIdAndRemove(id);
 
+    // Renvoie un code de statut 204 (No Content)
     res.status(204).json();
   } catch (error) {
     // Si une erreur est survenue, on la renvoie

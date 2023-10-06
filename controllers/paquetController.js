@@ -1,13 +1,13 @@
 // Importation des modèles nécessaires
-const Paquet = require('../models/paquet');
-const User = require('../models/user');
-const Carte = require('../models/carte');
+const Paquet = require('../models/paquet'); // Modèle pour les paquets
+const User = require('../models/user'); // Modèle pour les utilisateurs
+const Carte = require('../models/carte'); // Modèle pour les cartes
 
 
 // Récupérer tous les paquets
 exports.getPaquets = async (req, res, next) => {
   try {
-    // Récupération de tous les paquets
+    // Récupération de tous les paquets depuis la base de données
     const paquets = await Paquet.find();
     if (!paquets) {
       const error = new Error('Aucun paquet trouvé !');
@@ -106,16 +106,18 @@ exports.getPaquet = async (req, res, next) => {
       throw error;
     }
 
+    // Recherche des cartes associées au paquet
     const cartes = await Carte.find({ paquetId: id });
 
+    // Si aucune carte n'est associée au paquet, on initialise un objet vide
     if (!cartes) {
       cartes = {}
     }
     
-
+    // Création d'un objet contenant le paquet et ses cartes associées
     const paquetCartes = {"paquet" : paquet, "cartes" : cartes};
 
-    // Envoi du paquet en réponse
+    // Envoi du paquet et de ses cartes associées en réponse
     res.status(200).json(paquetCartes);
   } catch (error) {
     // Gestion des erreurs
@@ -187,6 +189,7 @@ exports.deletePaquet = async (req, res, next) => {
       throw error;
     }
 
+    // Recherche du paquet par son ID
     const paquet = await Paquet.findById(id);
 
     // Si le paquet n'existe pas, on lance une erreur
@@ -196,9 +199,10 @@ exports.deletePaquet = async (req, res, next) => {
       throw error;
     }
 
-    // Suppression du paquet
+    // Suppression du paquet de la base de données
     await Paquet.findByIdAndRemove(id);
 
+    // Envoi d'une réponse avec un code de statut 204 (No Content)
     res.status(204).json();
   } catch (error) {
     // Gestion des erreurs

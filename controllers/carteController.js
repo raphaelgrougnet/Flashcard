@@ -1,6 +1,18 @@
-const Carte = require('../models/carte');
-const UserCarte = require('../models/userCarte');
-const User = require('../models/user');
+const Carte = require('../models/carte'); // Importation du modèle Carte
+/**
+ * Description placeholder
+ * @date 05/10/2023 - 22:29:39
+ *
+ * @type {*}
+ */
+const UserCarte = require('../models/userCarte'); // Importation du modèle UserCarte
+/**
+ * Description placeholder
+ * @date 05/10/2023 - 22:29:39
+ *
+ * @type {*}
+ */
+const User = require('../models/user'); // Importation du modèle User
 
 // Récupérer toutes les cartes
 exports.getCartes = async (req, res, next) => {
@@ -24,7 +36,7 @@ exports.getCartes = async (req, res, next) => {
 
 // Créer une nouvelle carte
 exports.createCarte = async (req, res, next) => {
-  const { question, reponse, paquetId } = req.body;
+  const { question, reponse, paquetId } = req.body; // Récupération des données de la requête
 
   try {
     // Créer une nouvelle instance de carte avec les données reçues
@@ -50,7 +62,7 @@ exports.createCarte = async (req, res, next) => {
 // Récupérer une carte
 exports.getCarte = async (req, res, next) => {
 
-  const id = req.params.id;
+  const id = req.params.id; // Récupération de l'ID de la carte
 
   try {
     // Vérifier si l'ID de la carte est valide
@@ -83,8 +95,8 @@ exports.getCarte = async (req, res, next) => {
 
 // Mettre à jour une carte
 exports.updateCarte = async (req, res, next) => {
-  const id = req.params.id;
-  const { question, reponse, paquetId } = req.body;
+  const id = req.params.id; // Récupération de l'ID de la carte
+  const { question, reponse, paquetId } = req.body; // Récupération des nouvelles données de la carte
 
   try {
     // Vérifier si l'ID de la carte est valide
@@ -125,7 +137,7 @@ exports.updateCarte = async (req, res, next) => {
 
 // Supprimer une carte
 exports.deleteCarte = async (req, res, next) => {
-  const id = req.params.id;
+  const id = req.params.id; // Récupération de l'ID de la carte
 
   try {
     // Vérifier si l'ID de la carte est valide
@@ -135,7 +147,7 @@ exports.deleteCarte = async (req, res, next) => {
       throw error;
     }
 
-    const carte = await Carte.findById(id);
+    const carte = await Carte.findById(id); // Récupération de la carte
 
     if (!carte){
       const error = new Error('Aucune carte trouvée !');
@@ -161,7 +173,7 @@ exports.deleteCarte = async (req, res, next) => {
 
 // Récupérer une carte aléatoire
 exports.getCarteAleatoire = async (req, res, next) => {
-  const idUser = req.params.idUser;
+  const idUser = req.params.idUser; // Récupération de l'ID de l'utilisateur
 
   try {
     // Récupérer l'utilisateur de la base de données
@@ -175,14 +187,14 @@ exports.getCarteAleatoire = async (req, res, next) => {
     }
 
     // Récupérer les cartes de l'utilisateur
-    const dateDuJour = new Date();
+    const dateDuJour = new Date(); // Récupération de la date du jour
     // On cherche les cartes qui ne sont pas de l'utilisateur ou dont la date est inférieure à la date du jour
     const cartesPossibles = await UserCarte.find({
       $or: [
-        { userId: { $ne: idUser } },
+        { userId: { $ne: idUser } }, // Cartes qui ne sont pas de l'utilisateur
         { 
           userId: idUser,
-          date: { $lt: dateDuJour }
+          date: { $lt: dateDuJour } // Cartes dont la date est inférieure à la date du jour
         }
       ]
     });
@@ -210,9 +222,9 @@ exports.getCarteAleatoire = async (req, res, next) => {
 
 // Répondre à une carte
 exports.reponseCarte = async (req, res, next) => {
-  const carteId = req.params.carteId;
-  const userId = req.params.userId;
-  const { reponse } = req.body;
+  const carteId = req.params.carteId; // Récupération de l'ID de la carte
+  const userId = req.params.userId; // Récupération de l'ID de l'utilisateur
+  const { reponse } = req.body; // Récupération de la réponse de l'utilisateur
 
   try {
     // Récupérer la carte de la base de données
