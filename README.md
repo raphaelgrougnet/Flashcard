@@ -8,19 +8,19 @@ Ce projet est une application de flashcards. Il utilise Node.js, Express et Mong
 2. Démarrez MongoDBCompass
 3. Installez les dépendances avec `npm install`
 4. Démarrez le serveur avec `npm run start`
-5. Installez dans Postman les tests avec le fichier `Flashcard.postman_collection.json`
+5. Installez dans Postman les tests avec le fichier [`Flashcard.postman_collection.json`](https://github.com/raphaelgrougnet/Flashcard/blob/main/Flashcard.postman_collection.json)
 6. Allez sur la route `db/seed` dans Postman pour remplir la base de données
    
 ### Structure du projet
 
 Le projet est structuré comme suit :
 
-- `app.js` : Le point d'entrée de l'application. Il configure le serveur Express et connecte l'application à la base de données MongoDB.
-- `package.json` : Contient la liste des dépendances du projet et les scripts npm.
-- `models/` : Contient les modèles Mongoose pour les utilisateurs, les paquets et les cartes.
-- `controllers/` : Contient les contrôleurs pour les utilisateurs, les paquets et les cartes.
-- `routes/` : Contient les routes pour les utilisateurs, les paquets et les cartes.
-- `seeds/` : Contient les données initiales pour la base de données.
+- [`app.js`](https://github.com/raphaelgrougnet/Flashcard/blob/main/app.js) : Le point d'entrée de l'application. Il configure le serveur Express et connecte l'application à la base de données MongoDB.
+- [`package.json`](https://github.com/raphaelgrougnet/Flashcard/blob/main/package.json) : Contient la liste des dépendances du projet et les scripts npm.
+- [`models/`](https://github.com/raphaelgrougnet/Flashcard/blob/main/models) : Contient les modèles Mongoose pour les utilisateurs, les paquets et les cartes.
+- [`controllers/`](https://github.com/raphaelgrougnet/Flashcard/blob/controllers) : Contient les contrôleurs pour les utilisateurs, les paquets et les cartes.
+- [`routes/`](https://github.com/raphaelgrougnet/Flashcard/blob/main/routes) : Contient les routes pour les utilisateurs, les paquets et les cartes.
+- [`seeds/`](https://github.com/raphaelgrougnet/Flashcard/blob/main/seeds) : Contient les données initiales pour la base de données.
   
 ### API
 
