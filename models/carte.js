@@ -4,19 +4,22 @@ const mongoose = require('mongoose');
 const carteSchema = new mongoose.Schema({
   question: {
     type: String,
+    required: [true, 'La question est requise']
   },
   reponse: {
     type: String,
+    required: [true, 'La réponse est requise']
   },
   paquetId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    required: [true, 'Le paquetId est requis'],
     ref: 'Paquet',
   },
   relationsUsers: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'UserCarteRelation',
+      required: [true, 'Le tableau de relations est requis']
     },
   ],
 },{

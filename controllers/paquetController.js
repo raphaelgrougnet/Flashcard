@@ -106,7 +106,6 @@ exports.getPaquet = async (req, res, next) => {
       throw error;
     }
 
-    //! Faire en sorte que les cartes soit dans le paquet
     const cartes = await Carte.find({ paquetId: id });
 
     if (!cartes) {
@@ -188,7 +187,6 @@ exports.deletePaquet = async (req, res, next) => {
       throw error;
     }
 
-    // Recherche du paquet par son ID
     const paquet = await Paquet.findById(id);
 
     // Si le paquet n'existe pas, on lance une erreur
@@ -199,17 +197,9 @@ exports.deletePaquet = async (req, res, next) => {
     }
 
     // Suppression du paquet
-    const promise = await paquet.remove();
+    await Paquet.findByIdAndRemove(id);
 
-    // Si la suppression a échoué, on lance une erreur
-    if (!promise) {
-      const error = new Error('Erreur lors de la suppression du paquet !');
-      error.statusCode = 500;
-      throw error;
-    }
-
-    // Envoi du paquet supprimé en réponse
-    res.status(200).json(paquet);
+    res.status(204).json();
   } catch (error) {
     // Gestion des erreurs
     if (error.name === 'ValidationError') {

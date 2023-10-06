@@ -155,7 +155,6 @@ exports.deleteUser = async (req, res, next) => {
       throw error;
     }
     
-    // Récupère l'utilisateur
     const user = await User.findById(id);
 
     // Si aucun utilisateur n'est trouvé, on lance une erreur
@@ -166,17 +165,9 @@ exports.deleteUser = async (req, res, next) => {
     };
 
     // Supprime l'utilisateur
-    const promise = await User.deleteOne(user);
+    await User.findByIdAndRemove(id);
 
-    // Si la suppression n'a pas fonctionné, on lance une erreur
-    if (promise["deletedCount"] !== 1){
-      const error = new Error('Erreur lors de la suppression de l\'utilisateur');
-      error.statusCode = 500;
-      throw error;
-    }
-
-    // Renvoie l'utilisateur supprimé
-    res.status(200).json(user)
+    res.status(204).json();
   } catch (error) {
     // Si une erreur est survenue, on la renvoie
     if (error.name === 'ValidationError'){
