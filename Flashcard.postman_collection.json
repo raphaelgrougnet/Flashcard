@@ -1,0 +1,3228 @@
+{
+	"info": {
+		"_postman_id": "9eab627d-7dac-4a14-87b2-44b94dd75995",
+		"name": "Flashcard",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17489378"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"    pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"})",
+									"",
+									"//récupération des données au format json",
+									"const users = pm.response.json();",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaArrUsers = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrUsers\"));",
+									"",
+									"// Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour un user\", () => {",
+									"    pm.response.to.have.jsonSchema(jsonSchemaArrUsers);",
+									"})",
+									"",
+									"const nb_users = parseInt(pm.collectionVariables.get(\"nb_users\"));",
+									"",
+									"pm.test(\"Nb. users retourné\", () =>{",
+									"    pm.expect(users.length).to.equal(nb_users);",
+									"})",
+									"",
+									"if(users.length == nb_users){",
+									"    pm.test(\"Test premier user est Jean-Michel\", () =>{",
+									"            pm.expect(users[0].prenom).to.equal(\"Jean-Michel\");",
+									"            pm.expect(users[0]._id).to.equal(\"650dade494237ad07eedc7ee\");",
+									"    })",
+									"}",
+									"",
+									"if(users.length == nb_users){",
+									"    pm.test(\"Test dernier user est Jean\", () =>{",
+									"            pm.expect(users[nb_users-1].prenom).to.equal(\"Jean\");",
+									"            pm.expect(users[nb_users-1]._id).to.equal(\"650dcaf47bc86e471e5c0af6\");",
+									"    })",
+									"}",
+									"    ",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"  pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {\r",
+									"  pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');\r",
+									"});\r",
+									"\r",
+									"//récupération des données au format json\r",
+									"const user = pm.response.json();\r",
+									"\r",
+									"// Chargement du schéma de données JSON à partir de l'environnement.\r",
+									"const jsonSchemaArrUsers = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrUsers\"));\r",
+									"\r",
+									"// Validation selon le schéma de données JSON.\r",
+									"pm.test(\"JSON respecte le schéma pour un user\", () => {\r",
+									"  pm.response.to.have.jsonSchema(jsonSchemaArrUsers.items);\r",
+									"\r",
+									"});\r",
+									"\r",
+									"\r",
+									"//Test : l'objet correspond à celui envoyé\r",
+									"pm.test(\"L'objet retourné est bien l'objet envoyé\", () =>{\r",
+									"  const userEnvoye = JSON.parse(pm.request.body.raw);\r",
+									"  //nom\r",
+									"  pm.expect(user.nom).is.not.undefined\r",
+									"  pm.expect(user.nom).to.be.equal(userEnvoye.nom);\r",
+									"\r",
+									"  //prenom\r",
+									"  pm.expect(user.prenom).is.not.undefined\r",
+									"  pm.expect(user.prenom).to.be.equal(userEnvoye.prenom);\r",
+									"\r",
+									"  //courriel\r",
+									"  pm.expect(user.courriel).is.not.undefined\r",
+									"  pm.expect(user.courriel).to.be.equal(userEnvoye.courriel);\r",
+									"\r",
+									" \r",
+									"})\r",
+									"\r",
+									"pm.test(\"Location contient l'URI pour l'accès à l'objet\", () => {\r",
+									"  pm.response.to.have.header(\"Location\");\r",
+									"  pm.response.to.be.header(\"Location\", \"/user/\" + user._id);\r",
+									"})\r",
+									"\r",
+									"// Modification des variables de collection\r",
+									"pm.collectionVariables.set(\"id_last_user_created\", user._id.toString());\r",
+									"pm.collectionVariables.set(\"last_user_created\", JSON.stringify(user));\r",
+									"\r",
+									"const nbUsers = parseInt(pm.collectionVariables.get(\"nb_users\")) + 1;\r",
+									"pm.collectionVariables.set(\"nb_users\", nbUsers);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courriel\":\"{{$randomEmail}}\",\r\n    \"nom\":\"{{$randomFirstName}}\",\r\n    \"prenom\":\"{{$randomLastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user (échec, pas de nom)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"'nom' est présent dans la réponse\", function () {\r",
+									"    pm.expect(responseData.message).to.include(\"nom\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courriel\":\"{{$randomEmail}}\",\r\n    \"prenom\":\"{{$randomLastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user (échec, pas de prénom)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"'prenom' est présent dans la réponse\", function () {\r",
+									"    pm.expect(responseData.message).to.include(\"prenom\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courriel\":\"{{$randomEmail}}\",\r\n    \"nom\":\"{{$randomFirstName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user (échec, pas de courriel)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"'courriel' est présent dans la réponse\", function () {\r",
+									"    pm.expect(responseData.message).to.include(\"courriel\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nom\":\"{{$randomFirstName}}\",\r\n    \"prenom\":\"{{$randomLastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user (échec, nom / prénom trop long)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Les mots 'nom' et 'prénom' sont présents dans la réponse\", function () {\r",
+									"    pm.expect(responseData.message).to.include(\"nom\");\r",
+									"    pm.expect(responseData.message).to.include(\"prenom\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courriel\":\"{{$randomEmail}}\",\r\n    \"nom\":\"123546789123546789123546789123546789123546789123546789\",\r\n    \"prenom\":\"123546789123546789123546789123546789123546789123546789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code dee retour",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//Test header",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"  pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"//récupération des données au format json",
+									"const user = pm.response.json();",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaArrUsers = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrUsers\"));",
+									"",
+									"//Test :  Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour un user\", () => {",
+									"  pm.response.to.have.jsonSchema(jsonSchemaArrUsers.items);",
+									"",
+									"});",
+									"",
+									"//Test : Vérifie si les données retournées sont les bonnes",
+									"pm.test(\"JSON contient les bonnes valeurs\", () =>{",
+									"  const last_user_created = JSON.parse(pm.collectionVariables.get(\"last_user_created\"))",
+									"",
+									"  //id",
+									"  pm.expect(user._id).to.be.equal(last_user_created._id);",
+									"",
+									"  //nom",
+									"  pm.expect(user.nom).to.be.equal(last_user_created.nom);",
+									"",
+									"  //prenom",
+									"  pm.expect(user.prenom).to.be.equal(last_user_created.prenom);",
+									"",
+									"   //courriel",
+									"  pm.expect(user.courriel).to.be.equal(last_user_created.courriel);",
+									"",
+									"",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_user_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user/:id (inexistant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user/:id (invalide)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									"",
+									"pm.test(\"'reponse' est présent dans la réponse\", function () {",
+									"    pm.expect(responseData.message).to.include(\"ID d'utilisateur invalide\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {\r",
+									"  pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');\r",
+									"});\r",
+									"\r",
+									"//récupération des données au format json\r",
+									"const user = pm.response.json();\r",
+									"\r",
+									"// Chargement du schéma de données JSON à partir de l'environnement.\r",
+									"const jsonSchemaArrUsers = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrUsers\"));\r",
+									"\r",
+									"// Validation selon le schéma de données JSON.\r",
+									"pm.test(\"JSON respecte le schéma pour un user\", () => {\r",
+									"  pm.response.to.have.jsonSchema(jsonSchemaArrUsers.items);\r",
+									"\r",
+									"});\r",
+									"\r",
+									"\r",
+									"//Test : l'objet correspond à celui envoyé\r",
+									"pm.test(\"L'objet retourné est bien l'objet envoyé\", () =>{\r",
+									"  const userEnvoye = JSON.parse(pm.request.body.raw);\r",
+									"\r",
+									"   //id\r",
+									"  pm.expect(user._id).to.be.equal(pm.request.url.path[1]);\r",
+									"\r",
+									"  //nom\r",
+									"  pm.expect(user.nom).to.be.equal(userEnvoye.nom);\r",
+									"\r",
+									"  //prenom\r",
+									"  pm.expect(user.prenom).to.be.equal(userEnvoye.prenom);\r",
+									"\r",
+									"  //courriel\r",
+									"  pm.expect(user.courriel).to.be.equal(userEnvoye.courriel);\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courriel\":\"{{$randomEmail}}\",\r\n    \"nom\":\"{{$randomFirstName}}\",\r\n    \"prenom\":\"{{$randomLastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_user_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user/:id (inexistant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courriel\":\"{{$randomEmail}}\",\r\n    \"nom\":\"{{$randomFirstName}}\",\r\n    \"prenom\":\"{{$randomLastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user/:id (inexistant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Paquets",
+			"item": [
+				{
+					"name": "paquets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"    pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"//récupération des données au format json",
+									"const paquets = pm.response.json();",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaArrPaquets = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrPaquets\"));",
+									"",
+									"// Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour un paquet\", () => {",
+									"    pm.response.to.have.jsonSchema(jsonSchemaArrPaquets);",
+									"});",
+									"",
+									"pm.test(\"JSON est retourné est un vecteur\", function () {",
+									"    pm.expect(paquets).to.be.an(\"array\");",
+									"});",
+									"",
+									"const nb_paquets = parseInt(pm.collectionVariables.get(\"nb_paquets\"));",
+									"",
+									"pm.test(\"Nb. paquets retournés\", () =>{",
+									"    pm.expect(paquets.length).to.equal(nb_paquets);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/paquets",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"    pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"//récupération des données au format json",
+									"const paquet = pm.response.json();",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaArrPaquets = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrPaquets\"));",
+									"",
+									"// Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour un paquet\", () => {",
+									"    pm.response.to.have.jsonSchema(jsonSchemaArrPaquets.items);",
+									"});",
+									"",
+									"//Test : l'objet correspond à celui envoyé",
+									"pm.test(\"L'objet retourné est bien l'objet envoyé\", () => {",
+									"    const paquetEnvoye = JSON.parse(pm.request.body.raw);",
+									"",
+									"    //nom",
+									"    pm.expect(paquet.nom).is.not.undefined",
+									"    pm.expect(paquet.nom).to.be.equal(paquetEnvoye.nom);",
+									"",
+									"    //description",
+									"    pm.expect(paquet.description).is.not.undefined",
+									"    pm.expect(paquet.description).to.be.equal(paquetEnvoye.description);",
+									"});",
+									"",
+									"pm.test(\"Location contient l'URI pour l'accès à l'objet\", () => {",
+									"    pm.response.to.have.header(\"Location\");",
+									"    pm.response.to.be.header(\"Location\", \"/paquet/\" + paquet._id);",
+									"});",
+									"",
+									"",
+									"// Modification des variables de collection",
+									"pm.collectionVariables.set(\"id_last_paquet_created\", paquet._id.toString());",
+									"pm.collectionVariables.set(\"last_paquet_created\", JSON.stringify(paquet));",
+									"",
+									"",
+									"const nbPaquets = parseInt(pm.collectionVariables.get(\"nb_paquets\")) + 1;",
+									"pm.collectionVariables.set(\"nb_paquets\", nbPaquets);",
+									"",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nom\":\"{{$randomJobArea}}\",\r\n    \"description\":\"{{$randomPhrase}}\",\r\n    \"userId\": \"650dade494237ad07eedc7ee\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/paquet",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet (échec, pas de nom)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"'nom' est présent dans la réponse\", function () {",
+									"    pm.expect(responseData.message).to.include(\"nom\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\":\"{{$randomPhrase}}\",\r\n    \"userId\": \"650dade494237ad07eedc7ee\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/paquet",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet (échec, nom déjà existant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"'nom' est présent dans la réponse\", function () {",
+									"    pm.expect(responseData.message).to.include(\"nom\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nom\": \"Faits\",\r\n    \"description\":\"{{$randomPhrase}}\",\r\n    \"userId\": \"650dade494237ad07eedc7ee\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/paquet",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet (échec, pas de userId)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"'userId' est présent dans la réponse\", function () {",
+									"    pm.expect(responseData.message).to.include(\"userId\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nom\":\"{{$randomJobArea}}\",\r\n    \"description\":\"{{$randomPhrase}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/paquet",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code dee retour",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//Test header",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"  pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"//récupération des données au format json",
+									"const reponse = pm.response.json();",
+									"const paquet = reponse.paquet",
+									"const cartes = reponse.cartes",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaArrPaquets = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrPaquets\"));",
+									"",
+									"//Test :  Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour un paquet\", () => {",
+									"  pm.expect(paquet).to.have.jsonSchema(jsonSchemaArrPaquets.items);",
+									"});",
+									"",
+									"// Test : Vérification que cartes est un tableau",
+									"pm.test(\"La variable 'cartes' est un tableau\", () => {",
+									"  pm.expect(cartes).to.be.an('array');",
+									"});",
+									"",
+									"//Test : Vérifie si les données retournées sont les bonnes",
+									"pm.test(\"JSON contient les bonnes valeurs\", () =>{",
+									"  const last_paquet_created = JSON.parse(pm.collectionVariables.get(\"last_paquet_created\"))",
+									"",
+									"  //id",
+									"  pm.expect(paquet._id).to.be.equal(last_paquet_created._id);",
+									"",
+									"  //nom",
+									"  pm.expect(paquet.nom).to.be.equal(last_paquet_created.nom);",
+									"",
+									"  //description",
+									"  pm.expect(paquet.description).to.be.equal(last_paquet_created.description);",
+									"",
+									"",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/paquet/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_paquet_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet/:id (inexistant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/paquet/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet/:id (invalide)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									"",
+									"pm.test(\"'reponse' est présent dans la réponse\", function () {",
+									"    pm.expect(responseData.message).to.include(\"ID de paquet invalide\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/paquet/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {\r",
+									"  pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');\r",
+									"});\r",
+									"\r",
+									"//récupération des données au format json\r",
+									"const paquet = pm.response.json();\r",
+									"\r",
+									"// Chargement du schéma de données JSON à partir de l'environnement.\r",
+									"const jsonSchemaArrPaquets = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrPaquets\"));\r",
+									"\r",
+									"// Validation selon le schéma de données JSON.\r",
+									"pm.test(\"JSON respecte le schéma pour un paquet\", () => {\r",
+									"  pm.response.to.have.jsonSchema(jsonSchemaArrPaquets.items);\r",
+									"\r",
+									"});\r",
+									"\r",
+									"\r",
+									"//Test : l'objet correspond à celui envoyé\r",
+									"pm.test(\"L'objet retourné est bien l'objet envoyé\", () =>{\r",
+									"  const paquetEnvoye = JSON.parse(pm.request.body.raw);\r",
+									"\r",
+									"  //id\r",
+									"  pm.expect(paquet._id).is.not.undefined\r",
+									"  pm.expect(paquet._id).to.be.equal(pm.request.url.path[1]);\r",
+									"\r",
+									"  //nom\r",
+									"  pm.expect(paquet.nom).is.not.undefined\r",
+									"  pm.expect(paquet.nom).to.be.equal(paquetEnvoye.nom);\r",
+									"\r",
+									"  //description\r",
+									"  pm.expect(paquet.description).is.not.undefined\r",
+									"  pm.expect(paquet.description).to.be.equal(paquetEnvoye.description);\r",
+									"\r",
+									"})\r",
+									"\r",
+									"// Modification des variables de collection\r",
+									"pm.collectionVariables.set(\"last_paquet_created\", JSON.stringify(paquet));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nom\": \"{{$randomJobArea}}\",\r\n    \"description\": \"{{$randomPhrase}}\",\r\n    \"userId\": \"650dade494237ad07eedc7ee\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/paquet/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_paquet_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet/:id (inexistant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courriel\":\"{{$randomEmail}}\",\r\n    \"nom\":\"{{$randomFirstName}}\",\r\n    \"prenom\":\"{{$randomLastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/paquet/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet/:id (inexistant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/paquet/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquets recherche",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"    pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"//récupération des données au format json",
+									"const paquets = pm.response.json();",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaArrPaquets = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrPaquets\"));",
+									"",
+									"// Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour un paquet\", () => {",
+									"    pm.response.to.have.jsonSchema(jsonSchemaArrPaquets);",
+									"});",
+									"",
+									"// Nombre de paquet = 2",
+									"const nb_paquets = 2;",
+									"pm.test(\"Nb. paquets retournés\", () =>{",
+									"    pm.expect(paquets.length).to.equal(nb_paquets);",
+									"});",
+									"",
+									"",
+									"// Vérification pour chaque élément du tableau",
+									"paquets.forEach(carte => {",
+									"    pm.test(`Le nom \"${carte.nom}\" contient le mot \"culture\"`, function () {",
+									"        pm.expect(carte.nom.toLowerCase()).to.include(\"culture\");",
+									"    });",
+									"});",
+									"",
+									"pm.test(`Le premier nom est La culture bio`, function () {",
+									"    pm.expect(paquets[0].nom).to.eq(\"La culture bio\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/paquets/recherche/:mot",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquets",
+								"recherche",
+								":mot"
+							],
+							"variable": [
+								{
+									"key": "mot",
+									"value": "culture"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquets recherche (aucun paquet trouvé)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"    pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/paquets/recherche/:mot",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquets",
+								"recherche",
+								":mot"
+							],
+							"variable": [
+								{
+									"key": "mot",
+									"value": "zzz"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cartes",
+			"item": [
+				{
+					"name": "cartes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"  pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"//récupération des données au format json",
+									"const cartes = pm.response.json();",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaArrCartes = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrCartes\"));",
+									"",
+									"// Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour une carte\", () => {",
+									"  pm.response.to.have.jsonSchema(jsonSchemaArrCartes);",
+									"});",
+									"",
+									"",
+									"",
+									"const nb_cartes = parseInt(pm.collectionVariables.get(\"nb_cartes\"));",
+									"",
+									"pm.test(\"Nb. cartes retournées\", () =>{",
+									"  pm.expect(cartes.length).to.equal(nb_cartes);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cartes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cartes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"  pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"//récupération des données au format json",
+									"const carte = pm.response.json();",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaCarte = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrCartes\"));",
+									"// Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour un carte\", () => {",
+									"  pm.response.to.have.jsonSchema(jsonSchemaCarte.items);",
+									"});",
+									"",
+									"//Test : l'objet correspond à celui envoyé",
+									"pm.test(\"L'objet retourné est bien l'objet envoyé\", () => {",
+									"  const carteEnvoye = JSON.parse(pm.request.body.raw);",
+									"",
+									"  // question",
+									"  pm.expect(carte.question).is.not.undefined",
+									"  pm.expect(carte.question).to.be.equal(carteEnvoye.question);",
+									"",
+									"  // reponse",
+									"  pm.expect(carte.reponse).is.not.undefined",
+									"  pm.expect(carte.reponse).to.be.equal(carteEnvoye.reponse);",
+									"",
+									"  // paquetId",
+									"  pm.expect(carte.paquetId).is.not.undefined",
+									"  pm.expect(carte.paquetId).to.be.equal(carteEnvoye.paquetId);",
+									"",
+									"});",
+									"//pm.test(\"Vérification si la date est égale à la date du jour (ignorant l'heure)\", () => {",
+									"//   const targetDate = new Date(carte.dateProchaineRevision);",
+									"//    const currentDate = new Date();",
+									"    // Comparez uniquement l'année, le mois et le jour",
+									"//    pm.expect(targetDate.getUTCFullYear()).to.equal(currentDate.getUTCFullYear());",
+									"//    pm.expect(targetDate.getUTCMonth()).to.equal(currentDate.getUTCMonth());",
+									"//    pm.expect(targetDate.getUTCDate()).to.equal(currentDate.getUTCDate());",
+									"//});",
+									"",
+									"pm.test(\"Location contient l'URI pour l'accès à l'objet\", () => {",
+									"  pm.response.to.have.header(\"Location\");",
+									"  pm.response.to.be.header(\"Location\", \"/carte/\" + carte._id);",
+									"});",
+									"",
+									"",
+									"// Modification des variables de collection",
+									"pm.collectionVariables.set(\"id_last_carte_created\", carte._id.toString());",
+									"pm.collectionVariables.set(\"last_carte_created\", JSON.stringify(carte));",
+									"",
+									"",
+									"const nbCartes = parseInt(pm.collectionVariables.get(\"nb_cartes\")) + 1;",
+									"pm.collectionVariables.set(\"nb_cartes\", nbCartes);",
+									"",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"question\": \"{{$randomLoremWords}}\",\r\n    \"reponse\": \"{{$randomLoremSentence}}\",\r\n    \"paquetId\": \"{{id_last_paquet_created}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/carte",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte (échec, pas de réponse)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"'reponse' est présent dans la réponse\", function () {",
+									"    pm.expect(responseData.message).to.include(\"reponse\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"question\": \"{{$randomLoremWords}}\",\r\n    \"paquetId\": \"650df8906d3c167ed388bb32\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/carte",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte (échec, pas de question)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"'question' est présent dans la réponse\", function () {",
+									"    pm.expect(responseData.message).to.include(\"question\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reponse\": \"{{$randomLoremSentence}}\",\r\n    \"paquetId\": \"650df8906d3c167ed388bb32\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/carte",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet/:id (vérifie que le paquet contient la carte)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code dee retour",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//Test header",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"  pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"//récupération des données au format json",
+									"const reponse = pm.response.json();",
+									"const paquet = reponse.paquet",
+									"const cartes = reponse.cartes",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaArrPaquets = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrPaquets\"));",
+									"const jsonSchemaArrCartes = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrCartes\"));",
+									"",
+									"//Test :  Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour un paquet\", () => {",
+									"  pm.expect(paquet).to.have.jsonSchema(jsonSchemaArrPaquets.items);",
+									"});",
+									"",
+									"pm.test(\"JSON respecte le schéma pour une carte\", () => {",
+									"  pm.expect(cartes[0]).to.have.jsonSchema(jsonSchemaArrCartes.items);",
+									"});",
+									"",
+									"// Test : Vérification que cartes est un tableau",
+									"pm.test(\"La variable 'cartes' est un tableau\", () => {",
+									"  pm.expect(cartes).to.be.an('array');",
+									"});",
+									"",
+									"//Test : Vérifie si les données retournées sont les bonnes",
+									"pm.test(\"JSON contient les bonnes valeurs\", () =>{",
+									"  const last_paquet_created = JSON.parse(pm.collectionVariables.get(\"last_paquet_created\"))",
+									"",
+									"  //id",
+									"  pm.expect(paquet._id).to.be.equal(last_paquet_created._id);",
+									"",
+									"  //nom",
+									"  pm.expect(paquet.nom).to.be.equal(last_paquet_created.nom);",
+									"",
+									"  //description",
+									"  pm.expect(paquet.description).to.be.equal(last_paquet_created.description);",
+									"",
+									"",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/paquet/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_paquet_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code dee retour",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//Test header",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"  pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"});",
+									"",
+									"//récupération des données au format json",
+									"const carte = pm.response.json();",
+									"",
+									"// Chargement du schéma de données JSON à partir de l'environnement.",
+									"const jsonSchemaCarte = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrCartes\"));",
+									"",
+									"//Test :  Validation selon le schéma de données JSON.",
+									"pm.test(\"JSON respecte le schéma pour une carte\", () => {",
+									"  pm.response.to.have.jsonSchema(jsonSchemaCarte.items);",
+									"});",
+									"",
+									"//Test : Vérifie si les données retournées sont les bonnes",
+									"pm.test(\"JSON contient les bonnes valeurs\", () =>{",
+									"  const last_carte_created = JSON.parse(pm.collectionVariables.get(\"last_carte_created\"))",
+									"",
+									"  // id",
+									"  pm.expect(carte._id).is.not.undefined",
+									"  pm.expect(carte._id).to.be.equal(last_carte_created._id);",
+									"",
+									"  // question",
+									"  pm.expect(carte.question).is.not.undefined",
+									"  pm.expect(carte.question).to.be.equal(last_carte_created.question);",
+									"",
+									"  // reponse",
+									"  pm.expect(carte.reponse).is.not.undefined",
+									"  pm.expect(carte.reponse).to.be.equal(last_carte_created.reponse);",
+									" ",
+									"  // paquetId",
+									"  pm.expect(carte.paquetId).is.not.undefined",
+									"  pm.expect(carte.paquetId).to.be.equal(last_carte_created.paquetId);",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/carte/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_carte_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte/:id (inexistant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/carte/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte/:id (invalide)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									"",
+									"pm.test(\"'reponse' est présent dans la réponse\", function () {",
+									"    pm.expect(responseData.message).to.include(\"ID de carte invalide\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/carte/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-type header est application/json et utf-8\", () => {\r",
+									"    pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');\r",
+									"});\r",
+									"\r",
+									"//récupération des données au format json\r",
+									"const carte = pm.response.json();\r",
+									"\r",
+									"// Chargement du schéma de données JSON à partir de l'environnement.\r",
+									"const jsonSchemaCarte = JSON.parse(pm.collectionVariables.get(\"jsonSchemaArrCartes\"));\r",
+									"\r",
+									"// Validation selon le schéma de données JSON.\r",
+									"pm.test(\"JSON respecte le schéma pour un ecarte\", () => {\r",
+									"    pm.response.to.have.jsonSchema(jsonSchemaCarte.items);\r",
+									"\r",
+									"});\r",
+									"\r",
+									"\r",
+									"//Test : l'objet correspond à celui envoyé\r",
+									"pm.test(\"L'objet retourné est bien l'objet envoyé\", () => {\r",
+									"    const carteEnvoye = JSON.parse(pm.request.body.raw);\r",
+									"\r",
+									"    //id\r",
+									"    pm.expect(carte._id).to.not.be.empty;\r",
+									"    pm.expect(carte._id).to.be.equal(pm.request.url.path[1]);\r",
+									"\r",
+									"    // question\r",
+									"    pm.expect(carte.question).to.not.be.empty;\r",
+									"    pm.expect(carte.question).to.be.equal(carteEnvoye.question);\r",
+									"\r",
+									"    // reponse\r",
+									"    pm.expect(carte.reponse).to.not.be.empty;\r",
+									"    pm.expect(carte.reponse).to.be.equal(carteEnvoye.reponse);\r",
+									"\r",
+									"    // paquetId\r",
+									"    pm.expect(carte.paquetId).to.not.be.empty;\r",
+									"    pm.expect(carte.paquetId).to.be.equal(carteEnvoye.paquetId);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"question\": \"{{$randomLoremWords}}\",\r\n    \"reponse\": \"{{$randomLoremSentence}}\",\r\n    \"paquetId\": \"650df8906d3c167ed388bb32\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/carte/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_carte_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte/:id (inexistant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"question\": \"{{$randomLoremWords}}\",\r\n    \"reponse\": \"{{$randomLoremSentence}}\",\r\n    \"paquetId\": \"650df8906d3c167ed388bb32\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/carte/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte/:id (inexistant)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.message).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {\r",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/carte/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCarteAleatoire",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"if (pm.response.code === 200) {",
+									"",
+									"",
+									"    pm.test(\"Content-type header est application/json et utf-8\", () => {",
+									"    pm.expect(pm.response.headers.get('content-type')).to.eql('application/json; charset=utf-8');",
+									"    });",
+									"",
+									"",
+									"    const carte = pm.response.json();",
+									"    console.log(carte._id)",
+									"",
+									"    pm.test(\"L'id ne doit pas être vide\", () => {",
+									"        pm.expect(carte).to.be.an('object');",
+									"        pm.expect(carte._id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"L'id ne doit pas être vide\");",
+									"    });",
+									"",
+									"",
+									"    pm.test(\"La question ne doit pas être vide\", () => {",
+									"        pm.expect(carte).to.be.an('object');",
+									"        pm.expect(carte.question).to.be.a('string').and.to.have.lengthOf.at.least(1, \"La question ne doit pas être vide\");",
+									"    });",
+									"",
+									"",
+									"    pm.test(\"La réponse ne doit pas être vide\", () => {",
+									"        pm.expect(carte.reponse).to.be.a('string').and.to.have.lengthOf.at.least(1, \"La réponse ne doit pas être vide\");",
+									"    });",
+									"",
+									"",
+									"    const id_last_user_created = pm.collectionVariables.get(\"id_last_user_created\")",
+									"    // Si la tableau relationsUsers n'est pas vide, vérifie s'il contient le userId et ",
+									"    // que la date est inférieure à la date du jour",
+									"    if (carte.relationsUsers && carte.relationsUsers.length > 0) {",
+									"        carte.relationsUsers.forEach(relation => {",
+									"            // Vérification de l'id du user et de la date",
+									"            if (relation.userId === id_last_user_created && new Date(relation.dateProchaineRevision) > new Date()) {",
+									"                pm.test(\"La dateProchaineRevision est inférieure à celle du jour\", function () {",
+									"                    pm.expect.fail(\"La dateProchaineRevision doit être inférieure à celle du jour.\");",
+									"                });",
+									"            }",
+									"        });",
+									"    }",
+									"",
+									"",
+									"    // Modification des variables de collection",
+									"    pm.collectionVariables.set(\"id_last_carte_selected\", carte._id.toString());",
+									"",
+									"} else {",
+									"",
+									"    pm.test(\"Status code 404, il n'y a plus de carte à réviser\", () => {",
+									"        pm.expect(pm.response.code).to.equal(404);",
+									"    })",
+									"",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/carteAleatoire/:idUser",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carteAleatoire",
+								":idUser"
+							],
+							"variable": [
+								{
+									"key": "idUser",
+									"value": "{{id_last_user_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Réponse correcte",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"bonnesReponses est un entier positif\", function () {",
+									"    pm.expect(responseData.bonnesReponses).to.be.a('number');",
+									"    pm.expect(responseData.bonnesReponses).to.be.at.least(0);",
+									"});",
+									"",
+									"",
+									"pm.test(\"dateProchaineRevision est correctement calculée\", function () {",
+									"    const dateCalcule = new Date();",
+									"    const nbBonneReponse = responseData.bonnesReponses - 1",
+									"    const nbJourProchaineRevision = Math.pow(nbBonneReponse, 2) + nbBonneReponse + 1;",
+									"    const dateProchaineRevision = new Date(responseData.dateProchaineRevision);",
+									"    dateCalcule.setDate(dateCalcule.getDate() + nbJourProchaineRevision);",
+									"    dateCalcule.setMinutes(dateCalcule.getMinutes() - 1);",
+									"    pm.expect(dateProchaineRevision >= dateCalcule).to.be.true;",
+									"});",
+									"",
+									"",
+									"pm.test(\"L'id n'est pas vide\", function () {",
+									"    pm.expect(responseData._id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+									"});",
+									"",
+									"pm.test(\"Le userId correspond à celui qui est envoyé\"), function () {",
+									"    const userId = pm.collectionVariables.get(\"id_last_user_created\")",
+									"    pm.expect(responseData.userId).to.equal(userId);",
+									"}",
+									"",
+									"pm.test(\"Le carteId correspond à celui qui est envoyé\"), function () {",
+									"    const carteId = pm.collectionVariables.get(\"id_last_carte_selected\")",
+									"    pm.expect(responseData.carteId).to.equal(carteId);",
+									"}",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reponse\": \"ok\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/carte/:carteId/:userId/reponse",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":carteId",
+								":userId",
+								"reponse"
+							],
+							"variable": [
+								{
+									"key": "carteId",
+									"value": "{{id_last_carte_selected}}"
+								},
+								{
+									"key": "userId",
+									"value": "{{id_last_user_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Réponse correcte (échec, mauvais userId)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test code de retour",
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"La réponse contient un champ 'message'\", function () {",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Le champ 'message' n'est pas vide\", function () {",
+									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Le champ 'message' ne doit pas être vide\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"'Utilisateur non trouvé' est présent dans la réponse\", function () {",
+									"    pm.expect(responseData.message).to.include(\"Utilisateur non trouvé\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reponse\": \"ok\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/carte/:carteId/:userId/reponse",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":carteId",
+								":userId",
+								"reponse"
+							],
+							"variable": [
+								{
+									"key": "carteId",
+									"value": "{{id_last_carte_selected}}"
+								},
+								{
+									"key": "userId",
+									"value": "{{bad_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Réponse incorrecte",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseData = pm.response.json();",
+									"",
+									"pm.test(\"bonnesReponses est égal à 0\", function () {",
+									"    pm.expect(responseData.bonnesReponses).to.equal(0);",
+									"});",
+									"",
+									"",
+									"pm.test(\"dateProchaineRevision est la date du jour\", function () {",
+									"    dateDuJour = new Date().toISOString().slice(0, 10)",
+									"    pm.expect(responseData.dateProchaineRevision.slice(0, 10)).to.equal(dateDuJour)",
+									"});",
+									"",
+									"",
+									"",
+									"pm.test(\"L'id n'est pas vide\", function () {",
+									"    pm.expect(responseData._id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+									"});",
+									"",
+									"pm.test(\"Le userId correspond à celui qui est envoyé\"), function () {",
+									"    const userId = pm.collectionVariables.get(\"id_last_user_created\")",
+									"    pm.expect(responseData.userId).to.equal(userId);",
+									"}",
+									"",
+									"pm.test(\"Le carteId correspond à celui qui est envoyé\"), function () {",
+									"    const carteId = pm.collectionVariables.get(\"id_last_carte_selected\")",
+									"    pm.expect(responseData.carteId).to.equal(carteId);",
+									"}",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reponse\": \"ko\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/carte/:carteId/:userId/reponse",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":carteId",
+								":userId",
+								"reponse"
+							],
+							"variable": [
+								{
+									"key": "carteId",
+									"value": "{{id_last_carte_selected}}"
+								},
+								{
+									"key": "userId",
+									"value": "{{id_last_user_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Suppression",
+			"item": [
+				{
+					"name": "user/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"\r",
+									"    // Si le statut est 204, alors modifie la variable de collection\r",
+									"    if (pm.response.code === 204) {\r",
+									"        const nbUsers = parseInt(pm.collectionVariables.get(\"nb_users\")) - 1;\r",
+									"        pm.collectionVariables.set(\"nb_users\", nbUsers);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_user_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "carte/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"\r",
+									"    // Si le statut est 204, alors modifie la variable de collection\r",
+									"    if (pm.response.code === 204) {\r",
+									"        const nbCartes = parseInt(pm.collectionVariables.get(\"nb_cartes\")) - 1;\r",
+									"        pm.collectionVariables.set(\"nb_cartes\", nbCartes);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/carte/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carte",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_carte_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paquet/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"\r",
+									"    // Si le statut est 204, alors modifie la variable de collection\r",
+									"    if (pm.response.code === 204) {\r",
+									"        const nbPaquets = parseInt(pm.collectionVariables.get(\"nb_paquets\")) - 1;\r",
+									"        pm.collectionVariables.set(\"nb_paquets\", nbPaquets);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/paquet/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"paquet",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{id_last_paquet_created}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "db/seed",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Analyser la réponse JSON",
+							"const responseJson = pm.response.json();",
+							"",
+							"// Extraire le nombre de cartes, de paquets et de users",
+							"const nb_users = responseJson.users.length;",
+							"const nb_paquets = responseJson.paquets.length;",
+							"const nb_cartes = responseJson.cartes.length;",
+							"",
+							"// Stocker les nombres dans les variables de collection",
+							"pm.collectionVariables.set(\"nb_users\", nb_users);",
+							"pm.collectionVariables.set(\"nb_paquets\", nb_paquets);",
+							"pm.collectionVariables.set(\"nb_cartes\", nb_cartes);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/db/seed",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"db",
+						"seed"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "nb_users",
+			"value": "3",
+			"type": "string"
+		},
+		{
+			"key": "nb_paquets",
+			"value": "3"
+		},
+		{
+			"key": "nb_cartes",
+			"value": "6",
+			"type": "string"
+		},
+		{
+			"key": "jsonSchemaArrUsers",
+			"value": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"_id\": { \"type\": \"string\" },\n      \"nom\": { \"type\": \"string\" },\n      \"prenom\": { \"type\": \"string\" },\n      \"courriel\": { \"type\": \"string\" },\n      \"relationsCartes\": {\"type\": \"array\"},\n      \"createdAt\": { \"type\": \"string\" },\n      \"updatedAt\": { \"type\": \"string\" },\n      \"__v\": {\"type\":\"number\"}\n    },\n    \"required\": [\"_id\", \"nom\", \"prenom\", \"courriel\"],\n    \"additionalProperties\": false\n  }\n}",
+			"type": "string"
+		},
+		{
+			"key": "jsonSchemaArrCartes",
+			"value": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"_id\": { \"type\": \"string\" },\n      \"question\": { \"type\": \"string\" },\n      \"reponse\": { \"type\": \"string\" },\n      \"paquetId\": { \"type\": \"string\" },\n      \"relationsUsers\": {\n        \"type\": \"array\",\n        \"items\": {\n          \"type\": \"string\"\n        }\n      },\n      \"createdAt\": { \"type\": \"string\" },\n      \"updatedAt\": { \"type\": \"string\" },\n      \"__v\": {\"type\":\"number\"}\n    },\n    \"required\": [\"_id\", \"question\", \"reponse\", \"paquetId\"],\n    \"additionalProperties\": false\n  }\n}",
+			"type": "string"
+		},
+		{
+			"key": "jsonSchemaArrPaquets",
+			"value": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"_id\": { \"type\": \"string\" },\n      \"nom\": { \"type\": \"string\" },\n      \"description\": { \"type\": \"string\" },\n      \"userId\": { \"type\": \"string\" },\n      \"createdAt\": { \"type\": \"string\" },\n      \"updatedAt\": { \"type\": \"string\" },\n      \"__v\": {\"type\":\"number\"}\n    },\n    \"required\": [\"_id\", \"nom\", \"userId\"],\n    \"additionalProperties\": false\n  }\n}",
+			"type": "string"
+		},
+		{
+			"key": "id_last_user_created",
+			"value": ""
+		},
+		{
+			"key": "last_user_created",
+			"value": ""
+		},
+		{
+			"key": "bad_id",
+			"value": "ffffffffffffffffffffffff",
+			"type": "string"
+		},
+		{
+			"key": "id_last_paquet_created",
+			"value": ""
+		},
+		{
+			"key": "last_paquet_created",
+			"value": ""
+		},
+		{
+			"key": "id_last_carte_created",
+			"value": ""
+		},
+		{
+			"key": "last_carte_created",
+			"value": ""
+		},
+		{
+			"key": "id_last_carte_selected",
+			"value": ""
+		}
+	]
+}
