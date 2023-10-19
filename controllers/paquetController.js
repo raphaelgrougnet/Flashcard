@@ -55,16 +55,6 @@ exports.createPaquet = async (req, res, next) => {
       throw error;
     }
 
-    // // Vérification de l'existence d'un paquet avec le même nom pour le même utilisateur
-    // const paquetExiste = await Paquet.findOne({ nom, userId });
-
-    // // Si un tel paquet existe, on lance une erreur
-    // if (paquetExiste) {
-    //   const error = new Error('Un paquet avec ce nom existe déjà !');
-    //   error.statusCode = 400;
-    //   throw error;
-    // }
-
     // Sauvegarde du nouveau paquet dans la base de données
     const paquetCree = await paquet.save();
     // Ajout de l'URL du nouveau paquet dans l'en-tête Location de la réponse
