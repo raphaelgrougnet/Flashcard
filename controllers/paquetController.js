@@ -55,15 +55,15 @@ exports.createPaquet = async (req, res, next) => {
       throw error;
     }
 
-    // Vérification de l'existence d'un paquet avec le même nom pour le même utilisateur
-    const paquetExiste = await Paquet.findOne({ nom, userId });
+    // // Vérification de l'existence d'un paquet avec le même nom pour le même utilisateur
+    // const paquetExiste = await Paquet.findOne({ nom, userId });
 
-    // Si un tel paquet existe, on lance une erreur
-    if (paquetExiste) {
-      const error = new Error('Un paquet avec ce nom existe déjà !');
-      error.statusCode = 400;
-      throw error;
-    }
+    // // Si un tel paquet existe, on lance une erreur
+    // if (paquetExiste) {
+    //   const error = new Error('Un paquet avec ce nom existe déjà !');
+    //   error.statusCode = 400;
+    //   throw error;
+    // }
 
     // Sauvegarde du nouveau paquet dans la base de données
     const paquetCree = await paquet.save();
@@ -89,13 +89,6 @@ exports.getPaquet = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    // Vérification de la validité de l'ID du paquet
-    if (id.length !== 12 && id.length !== 24) {
-      const error = new Error('ID de paquet invalide');
-      error.statusCode = 400;
-      throw error;
-    }
-
     // Recherche du paquet par son ID
     const paquet = await Paquet.findById(id);
 
@@ -121,6 +114,10 @@ exports.getPaquet = async (req, res, next) => {
     res.status(200).json(paquetCartes);
   } catch (error) {
     // Gestion des erreurs
+    if (error.kind === 'ObjectId' && error.name === 'CastError') {
+      error.statusCode = 400;
+      error.message = 'ID de paquet invalide';
+    }
     if (error.name === 'ValidationError') {
       error.statusCode = 400;
     }
@@ -138,14 +135,7 @@ exports.updatePaquet = async (req, res, next) => {
   const { nom, description, userId } = req.body;
 
   try {
-    // Vérification de la validité de l'ID du paquet
-    if (id.length !== 12 && id.length !== 24) {
-      const error = new Error('ID de paquet invalide');
-      error.statusCode = 400;
-      throw error;
-    }
-
-    // Recherche du paquet par son ID
+     // Recherche du paquet par son ID
     const paquet = await Paquet.findById(id);
 
     // Si le paquet n'existe pas, on lance une erreur
@@ -166,6 +156,10 @@ exports.updatePaquet = async (req, res, next) => {
     res.status(200).json(paquetModifie);
   } catch (error) {
     // Gestion des erreurs
+    if (error.kind === 'ObjectId' && error.name === 'CastError') {
+      error.statusCode = 400;
+      error.message = 'ID de paquet invalide';
+    }
     if (error.name === 'ValidationError') {
       error.statusCode = 400;
     }
@@ -182,13 +176,6 @@ exports.deletePaquet = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    // Vérification de la validité de l'ID du paquet
-    if (id.length !== 12 && id.length !== 24) {
-      const error = new Error('ID de paquet invalide');
-      error.statusCode = 400;
-      throw error;
-    }
-
     // Recherche du paquet par son ID
     const paquet = await Paquet.findById(id);
 
@@ -203,9 +190,13 @@ exports.deletePaquet = async (req, res, next) => {
     await Paquet.findByIdAndRemove(id);
 
     // Envoi d'une réponse avec un code de statut 204 (No Content)
-    res.status(204).json();
+    res.status(204).send();
   } catch (error) {
     // Gestion des erreurs
+    if (error.kind === 'ObjectId' && error.name === 'CastError') {
+      error.statusCode = 400;
+      error.message = 'ID de paquet invalide';
+    }
     if (error.name === 'ValidationError') {
       error.statusCode = 400;
     }

@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
       },
       message: props => `${props.value} n'est pas un courriel valide!`
     },
-    required: [true, "Le courriel de l'utilisateur est requis"]
+    required: [true, "Le courriel de l'utilisateur est requis"],
+    unique: true,
   },
   relationsCartes: [
     {

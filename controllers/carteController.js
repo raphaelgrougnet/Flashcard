@@ -65,12 +65,6 @@ exports.getCarte = async (req, res, next) => {
   const id = req.params.id; // Récupération de l'ID de la carte
 
   try {
-    // Vérifier si l'ID de la carte est valide
-    if (id.length !== 12 && id.length !== 24) {
-      const error = new Error('ID de carte invalide');
-      error.statusCode = 400;
-      throw error;
-    }
     // Récupérer la carte de la base de données
     const carte = await Carte.findById(id);
 
@@ -83,6 +77,10 @@ exports.getCarte = async (req, res, next) => {
     // Renvoyer la carte en format JSON
     res.status(200).json(carte)
   } catch (error) {
+    if (error.kind === 'ObjectId' && error.name === 'CastError') {
+      error.statusCode = 400;
+      error.message = 'ID de carte invalide';
+    }
     if (error.name === 'ValidationError'){
       error.statusCode = 400;
     }
@@ -99,12 +97,6 @@ exports.updateCarte = async (req, res, next) => {
   const { question, reponse, paquetId } = req.body; // Récupération des nouvelles données de la carte
 
   try {
-    // Vérifier si l'ID de la carte est valide
-    if (id.length !== 12 && id.length !== 24) {
-      const error = new Error('ID de carte invalide');
-      error.statusCode = 400;
-      throw error;
-    }
     // Récupérer la carte de la base de données
     const carte = await Carte.findById(id);
 
@@ -125,6 +117,10 @@ exports.updateCarte = async (req, res, next) => {
     // Renvoyer la carte modifiée en format JSON
     res.status(200).json(carteModifiee)
   } catch (error) {
+    if (error.kind === 'ObjectId' && error.name === 'CastError') {
+      error.statusCode = 400;
+      error.message = 'ID de carte invalide';
+    }
     if (error.name === 'ValidationError'){
       error.statusCode = 400;
     }
@@ -140,13 +136,6 @@ exports.deleteCarte = async (req, res, next) => {
   const id = req.params.id; // Récupération de l'ID de la carte
 
   try {
-    // Vérifier si l'ID de la carte est valide
-    if (id.length !== 12 && id.length !== 24) {
-      const error = new Error('ID de carte invalide');
-      error.statusCode = 400;
-      throw error;
-    }
-
     const carte = await Carte.findById(id); // Récupération de la carte
 
     if (!carte){
@@ -159,8 +148,12 @@ exports.deleteCarte = async (req, res, next) => {
     await Carte.findByIdAndRemove(id);
 
     // Renvoyer un code de statut 204 (No Content)
-    res.status(204).json();
+    res.status(204).send();
   } catch (error) {
+    if (error.kind === 'ObjectId' && error.name === 'CastError') {
+      error.statusCode = 400;
+      error.message = 'ID de carte invalide';
+    }
     if (error.name === 'ValidationError'){
       error.statusCode = 400;
     }
@@ -188,21 +181,35 @@ exports.getCarteAleatoire = async (req, res, next) => {
 
     // Récupérer les cartes de l'utilisateur
     const dateDuJour = new Date(); // Récupération de la date du jour
+    
     // On cherche les cartes qui ne sont pas de l'utilisateur ou dont la date est inférieure à la date du jour
-    const cartesPossibles = await UserCarte.find({
-      $or: [
-        { userId: { $ne: idUser } }, // Cartes qui ne sont pas de l'utilisateur
-        { 
-          userId: idUser,
-          date: { $lt: dateDuJour } // Cartes dont la date est inférieure à la date du jour
-        }
-      ]
-    });
-  
+    const cartesRelationsPossibles = await UserCarte.find({
+      userId: user["_id"],
+      dateProchaineRevision: { $lt: dateDuJour } // Cartes dont la date est inférieure à la date du jour
+    }, 
+    { carteId: 1, _id: 0 });
+
+    // Boucle sur les cartes pour convertir en string
+    for (let i = 0; i < cartesRelationsPossibles.length; i++) {
+      cartesRelationsPossibles[i] = cartesRelationsPossibles[i]["carteId"].toString();
+    }
+
+    // Récupérer toutes les cartes
+    const toutesLesCartes = await Carte.find({relationsUsers: {$ne: idUser}}, {_id: 1});
+
+    // On combine les deux listes de cartes
+    const cartesFinales = [...cartesRelationsPossibles, ...toutesLesCartes];
+    // Si aucune carte n'est trouvée, on lance une erreur
+    if (cartesFinales.length === 0) {
+      const error = new Error('Aucune carte trouvée');
+      error.statusCode = 404;
+      throw error;
+    }
     // Choisir une carte aléatoire parmi les cartes possibles
-    const carteAleatoire = cartesPossibles[Math.floor(Math.random() * cartesPossibles.length)];
+    const carteAleatoire = cartesFinales[Math.floor(Math.random() * cartesFinales.length)];
+
     // Récupérer la carte de la base de données
-    const carte = await Carte.findById(carteAleatoire.carteId);
+    const carte = await Carte.findById(carteAleatoire);
     // Si la carte n'existe pas, on lance une erreur
     if (!carte) {
       const error = new Error('Carte non trouvée');
@@ -235,6 +242,9 @@ exports.reponseCarte = async (req, res, next) => {
       throw error;
     }
 
+    carte["relationsUsers"].push(userId);
+    await carte.save();
+
     // Récupérer l'utilisateur de la base de données
     const user = await User.findById(userId);
 
@@ -243,6 +253,9 @@ exports.reponseCarte = async (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
+
+    user["relationsCartes"].push(carteId);
+    await user.save();
 
     // Récupérer la relation entre l'utilisateur et la carte
     let userCarte = await UserCarte.findOne({userId: userId, carteId: carteId});
@@ -256,6 +269,8 @@ exports.reponseCarte = async (req, res, next) => {
         dateProchaineRevision: Date.now()
       });
     }
+
+
 
     // Mettre à jour le nombre de bonnes réponses en fonction de la réponse de l'utilisateur
     if (reponse === 'ok') {
@@ -278,6 +293,10 @@ exports.reponseCarte = async (req, res, next) => {
     // Renvoyer la relation modifiée en format JSON
     res.status(200).json(userCarteModifiee);
   } catch (err) {
+    if (err.kind === 'ObjectId' && err.name === 'CastError') {
+      err.statusCode = 400;
+      err.message = 'ID invalide';
+    }
     if (!err.statusCode) {
       err.statusCode = 500;
     }

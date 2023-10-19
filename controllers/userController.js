@@ -43,6 +43,10 @@ exports.createUser = async (req, res, next) => {
   }
   catch (error) {
     // Si une erreur est survenue, on la renvoie
+    if (error.code === 11000) {
+      error = new Error('Ce courriel est déjà utilisé');
+      error.statusCode = 400;
+    }
     if (error.name === 'ValidationError') {
       error.statusCode = 400;
     }
@@ -61,12 +65,6 @@ exports.getUser = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    // Si l'id n'est pas valide, on lance une erreur
-    if (id.length !== 12 && id.length !== 24) {
-      const error = new Error('ID d\'utilisateur invalide');
-      error.statusCode = 400;
-      throw error;
-    }
     // Récupère l'utilisateur de la base de données
     const user = await User.findById(id);
 
@@ -81,6 +79,10 @@ exports.getUser = async (req, res, next) => {
     res.status(200).json(user)
   } catch (error) {
     // Si une erreur est survenue, on la renvoie
+    if (error.kind === 'ObjectId' && error.name === 'CastError') {
+      error.statusCode = 400;
+      error.message = 'ID d\'utilisateur invalide';
+    }
     if (error.name === 'ValidationError'){
       error.statusCode = 400;
     }
@@ -98,14 +100,7 @@ exports.updateUser = async (req, res, next) => {
   // Récupère l'id de l'utilisateur depuis les paramètres de la requête
   const id = req.params.id;
 
-  try {
-    // Si l'id n'est pas valide, on lance une erreur
-    if (id.length !== 12 && id.length !== 24) {
-      const error = new Error('ID d\'utilisateur invalide');
-      error.statusCode = 400;
-      throw error;
-    }
-    
+  try {   
     // Récupère l'utilisateur de la base de données
     const user = await User.findById(id);
 
@@ -130,6 +125,10 @@ exports.updateUser = async (req, res, next) => {
     res.status(200).json(user)
   } catch (error) {
     // Si une erreur est survenue, on la renvoie
+    if (error.kind === 'ObjectId' && error.name === 'CastError') {
+      error.statusCode = 400;
+      error.message = 'ID d\'utilisateur invalide';
+    }
     if (error.name === 'ValidationError'){
       error.statusCode = 400;
     }
@@ -148,14 +147,7 @@ exports.deleteUser = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    // Si l'id n'est pas valide, on lance une erreur
-    if (id.length !== 12 && id.length !== 24) {
-      const error = new Error('ID d\'utilisateur invalide');
-      error.statusCode = 400;
-      throw error;
-    }
-    
-    // Récupère l'utilisateur de la base de données
+     // Récupère l'utilisateur de la base de données
     const user = await User.findById(id);
 
     // Si aucun utilisateur n'est trouvé, on lance une erreur
@@ -169,9 +161,13 @@ exports.deleteUser = async (req, res, next) => {
     await User.findByIdAndRemove(id);
 
     // Renvoie un code de statut 204 (No Content)
-    res.status(204).json();
+    res.status(204).send();
   } catch (error) {
     // Si une erreur est survenue, on la renvoie
+    if (error.kind === 'ObjectId' && error.name === 'CastError') {
+      error.statusCode = 400;
+      error.message = 'ID d\'utilisateur invalide';
+    }
     if (error.name === 'ValidationError'){
       error.statusCode = 400;
     }
