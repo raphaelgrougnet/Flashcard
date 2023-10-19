@@ -1,17 +1,5 @@
 const Carte = require('../models/carte'); // Importation du modèle Carte
-/**
- * Description placeholder
- * @date 05/10/2023 - 22:29:39
- *
- * @type {*}
- */
 const UserCarte = require('../models/userCarte'); // Importation du modèle UserCarte
-/**
- * Description placeholder
- * @date 05/10/2023 - 22:29:39
- *
- * @type {*}
- */
 const User = require('../models/user'); // Importation du modèle User
 
 // Récupérer toutes les cartes
